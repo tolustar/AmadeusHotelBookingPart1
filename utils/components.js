@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  ScrollView,
   ActivityIndicator,
   View,
   Text,
@@ -17,6 +16,7 @@ export const DestinationField = ({
   destinationList,
 }) => (
   <View>
+    <Text style={[styles.bold]}>Destination (Airport / City)</Text>
     <TextInput
       style={styles.input}
       onChangeText={onChange}
@@ -28,7 +28,7 @@ export const DestinationField = ({
       name or code
     </Text>
 
-    <ScrollView
+    <View
       contentInsetAdjustmentBehavior="automatic"
       style={styles.searchViewContainer}>
       {loading ? (
@@ -36,20 +36,19 @@ export const DestinationField = ({
       ) : (
         <View>
           {destinationList.map((item, index) => (
-            <View key={index} style={styles.destinationCard}>
-              <TouchableOpacity
-                onPress={() =>
-                  autoComplete(`${item.name}, ${item.address.cityCode}`)
-                }>
+            <TouchableOpacity
+              key={index}
+              onPress={() => autoComplete(item.name, item.address.cityCode)}>
+              <View style={styles.destinationCard}>
                 <Text
                   style={
                     styles.text
                   }>{`${item.name}, ${item.address.cityCode}`}</Text>
-              </TouchableOpacity>
-            </View>
+              </View>
+            </TouchableOpacity>
           ))}
         </View>
       )}
-    </ScrollView>
+    </View>
   </View>
 );
