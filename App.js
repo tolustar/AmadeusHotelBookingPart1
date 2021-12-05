@@ -1,36 +1,44 @@
 import React, {useState} from 'react';
-import {SafeAreaView, StatusBar, Text, View} from 'react-native';
+import {
+  SafeAreaView,
+  StatusBar,
+  Text,
+  View,
+  ScrollView,
+  Alert,
+} from 'react-native';
 
 import {styles} from './utils/styles';
 import {fetchDestination} from './utils/apis';
 import {DestinationField} from './utils/components';
 
 const App = () => {
-  const [searchItem, setSearchItem] = useState('');
-  const [destinationList, setdestinationList] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [destinationSearchItem, setDestinationSearchItem] = useState('');
+  const [destinationList, setDestinationList] = useState([]);
+  const [destinationLoading, setDestinationLoading] = useState(false);
 
   const [typingId, setTypingId] = useState(null);
 
-  const autoCompleteDestinationField = text => {
-    setSearchItem(text);
-    setdestinationList([]);
+  const autoCompleteDestinationField = (destination, code) => {
+    setDestinationSearchItem(destination);
+    setDestinationList([]);
   };
 
   const searchDestination = text => {
-    setSearchItem(text);
+    setDestinationSearchItem(text);
 
     const destinationData = async () => {
       try {
-        setLoading(true);
-        const result = await fetchDestination(searchItem);
-        setLoading(false);
-        setdestinationList(result);
+        setDestinationLoading(true);
+        const result = await fetchDestination(destinationSearchItem);
+        setDestinationLoading(false);
+        setDestinationList(result);
       } catch (error) {
-        setdestinationList([]);
+        setDestinationList([]);
 
+        Alert.alert('An error occured');
         console.log('error', error.response.data);
-        setLoading(false);
+        setDestinationLoading(false);
       }
     };
 
@@ -44,19 +52,18 @@ const App = () => {
       <View style={[styles.screenContainer]}>
         <StatusBar barStyle={'dark-content'} />
 
-        <View style={styles.backgroundContainer}>
-          <Text style={[styles.header]}>Amadeus Hotel Booking</Text>
-
-          <Text style={[styles.bold]}>Destination (Airport / City)</Text>
-
-          <DestinationField
-            onChange={searchDestination}
-            value={searchItem}
-            autoComplete={autoCompleteDestinationField}
-            destinationList={destinationList}
-            loading={loading}
-          />
-        </View>
+        <ScrollView>
+          <View style={styles.backgroundContainer}>
+            <Text style={[styles.header]}>Amadeus Hotel Booking</Text>
+            <DestinationField
+              onChange={searchDestination}
+              value={destinationSearchItem}
+              autoComplete={autoCompleteDestinationField}
+              destinationList={destinationList}
+              loading={destinationLoading}
+            />
+          </View>
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
